@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.mianasad.chatsapp">
 
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,7 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ChatsApp"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Activities.ChatActivity"></activity>
+        <activity android:name=".Activities.GroupChatActivity"></activity>
+        <activity
+            android:name=".Activities.ChatActivity"
+            android:theme="@style/Theme.ChatsApp.NoActionBar" />
         <activity android:name=".Activities.SetupProfileActivity" />
         <activity
             android:name=".Activities.OTPActivity"
@@ -24,12 +29,25 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.MainActivity"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name=".Activities.MainActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
 
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
+        <!-- Set custom default icon. This is used when no icon is set for incoming notification messages.
+     See README(https://goo.gl/l4GJaQ) for more. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_send" />
+        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. See README(https://goo.gl/6BKBk7) for more. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/green" />
+
     </application>
 
 </manifest>
