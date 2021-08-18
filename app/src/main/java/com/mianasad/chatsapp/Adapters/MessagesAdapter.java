@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,6 +18,7 @@ import com.github.pgreze.reactions.ReactionsConfig;
 import com.github.pgreze.reactions.ReactionsConfigBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.mianasad.chatsapp.Models.Message;
 import com.mianasad.chatsapp.R;
 import com.mianasad.chatsapp.databinding.DeleteDialogBinding;
@@ -37,7 +39,10 @@ public class MessagesAdapter extends RecyclerView.Adapter {
     String senderRoom;
     String receiverRoom;
 
+    FirebaseRemoteConfig remoteConfig;
+
     public MessagesAdapter(Context context, ArrayList<Message> messages, String senderRoom, String receiverRoom) {
+        remoteConfig = FirebaseRemoteConfig.getInstance();
         this.context = context;
         this.messages = messages;
         this.senderRoom = senderRoom;
@@ -84,6 +89,10 @@ public class MessagesAdapter extends RecyclerView.Adapter {
                 .build();
 
         ReactionPopup popup = new ReactionPopup(context, config, (pos) -> {
+
+            if(pos < 0)
+                return false;
+
             if(holder.getClass() == SentViewHolder.class) {
                 SentViewHolder viewHolder = (SentViewHolder)holder;
                 viewHolder.binding.feeling.setImageResource(reactions[pos]);
@@ -140,7 +149,12 @@ public class MessagesAdapter extends RecyclerView.Adapter {
             viewHolder.binding.message.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    popup.onTouch(v, event);
+
+                    boolean isFeelingsEnabled = remoteConfig.getBoolean("isFeelingsEnabled");
+                    if(isFeelingsEnabled)
+                        popup.onTouch(v, event);
+                    else
+                        Toast.makeText(context, "This feature is disabled temporarily.", Toast.LENGTH_SHORT).show();
                     return false;
                 }
             });
@@ -163,6 +177,11 @@ public class MessagesAdapter extends RecyclerView.Adapter {
                             .setView(binding.getRoot())
                             .create();
 
+                    if(remoteConfig.getBoolean("isEveryoneDeletionEnabled")) {
+                        binding.everyone.setVisibility(View.VISIBLE);
+                    } else {
+                        binding.everyone.setVisibility(View.GONE);
+                    }
                     binding.everyone.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

@@ -2,7 +2,7 @@ package com.mianasad.chatsapp.Models;
 
 public class User {
 
-    private String uid, name, phoneNumber, profileImage;
+    private String uid, name, phoneNumber, profileImage, token;
 
     public User() {
 
@@ -45,5 +45,13 @@ public class User {
 
     public void setProfileImage(String profileImage) {
         this.profileImage = profileImage;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }
